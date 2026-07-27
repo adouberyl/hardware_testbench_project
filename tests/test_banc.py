@@ -1,67 +1,29 @@
 import pytest
-from banc import DeviceSimule, ConnexionSimulee, Driver
 
-def test_regler_puis_lire_tension_1():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
-    driver = Driver(connexion)
+@pytest.mark.parametrize("tension", [3.3, 0.0, 5.0, 12.0, 99999, -1.2])
 
-    driver.regler_tension(3.3)
-    assert driver.lire_tension()==3.3
+def test_regler_puis_lire_tension(driver, tension):
 
-
-def test_regler_puis_lire_tension_2():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
-    driver = Driver(connexion)
-
-    driver.regler_tension(5.0)
-    assert driver.lire_tension()==5.0
-
-
-def test_regler_puis_lire_tension_3():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
-    driver = Driver(connexion)
-
-    driver.regler_tension(0.0)
-    assert driver.lire_tension()==0.0
-
-
-def test_regler_puis_lire_tension_4():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
-    driver = Driver(connexion)
-
-    driver.regler_tension(12.0)
-    assert driver.lire_tension()==12.0
+    driver.regler_tension(tension)
+    assert driver.lire_tension() == tension
 
     
-def test_status_renvoie_ready():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
+def test_status_renvoie_ready(connexion):
 
     connexion.envoyer("STATUS")
     assert connexion.recevoir() == "READY"
 
-def test_set_renvoie_ok():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
+def test_set_renvoie_ok(connexion):
 
     connexion.envoyer("SET V 3.3")
     assert connexion.recevoir() == "OK"
 
-def test_inc_renvoie_ERR():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
+def test_inc_renvoie_ERR(connexion):
 
     connexion.envoyer("test")
     assert connexion.recevoir()== "ERR"
 
-def test_cas_d_erreur():
-    device = DeviceSimule()
-    connexion = ConnexionSimulee(device)
-    driver = Driver(connexion)
+def test_cas_d_erreur(connexion):
 
     connexion.envoyer("BERYL")
     with pytest.raises(ValueError):float(connexion.recevoir())
