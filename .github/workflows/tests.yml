@@ -1,0 +1,22 @@
+name: Tests
+
+on: [push, pull_request]        # déclencheurs : à chaque push et chaque PR
+
+jobs:
+  test:                          # nom du job (libre)
+    runs-on: ubuntu-latest       # la machine distante : une Ubuntu fraîche
+    steps:
+      - uses: actions/checkout@v4          # récupère ton code sur la machine
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer les dépendances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lancer les tests
+        run: pytest -v
