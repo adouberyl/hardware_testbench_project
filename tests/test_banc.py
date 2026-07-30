@@ -1,5 +1,7 @@
 import pytest
 
+from error_config import CommandInvalidError, DeviceError
+
 @pytest.mark.parametrize("tension", [3.3, 0.0, 5.0, 12.0, 99999, -1.2])
 
 def test_regler_puis_lire_tension(driver, tension):
@@ -26,4 +28,15 @@ def test_inc_renvoie_ERR(connexion):
 def test_cas_d_erreur(connexion):
 
     connexion.envoyer("BERYL")
-    with pytest.raises(ValueError):float(connexion.recevoir())
+    with pytest.raises(ValueError):
+        float(connexion.recevoir())
+
+def test_commande_invalide_leve_l_exception(driver):
+
+    with pytest.raises(CommandInvalidError):
+        driver._dialoguer("BERYL")
+
+def test_commande_invalide_attrapable(driver):
+
+    with pytest.raises(DeviceError):
+        driver._dialoguer("BERYL")
